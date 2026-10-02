@@ -1,0 +1,13 @@
+{
+  "name": "LTC Music Studio",
+  "short_name": "LTC Studio",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#101114",
+  "theme_color": "#17191f",
+  "description": "Mini séquenceur tactile pour créer les ambiances musicales de Little To Civilisation.",
+  "icons": [
+    {"src":"icon-192.png","sizes":"192x192","type":"image/png"},
+    {"src":"icon-512.png","sizes":"512x512","type":"image/png"}
+  ]
+}

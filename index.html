@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+<meta name="theme-color" content="#17191f" />
+<title>LTC Music Studio V0.1</title>
+<link rel="manifest" href="manifest.json" />
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<div id="app">
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo">LTC</div>
+      <div><strong>Music Studio</strong><span>V0.1</span></div>
+    </div>
+    <div class="transport">
+      <button id="playBtn" class="accent">▶</button>
+      <button id="stopBtn">■</button>
+      <button id="loopBtn" class="toggle active">LOOP</button>
+      <button id="undoBtn">↶</button>
+      <button id="redoBtn">↷</button>
+    </div>
+    <div class="top-actions">
+      <button id="saveBtn">Sauver</button>
+      <button id="loadBtn">Charger</button>
+      <button id="exportProjectBtn">Projet</button>
+      <button id="importProjectBtn">Importer</button>
+      <button id="exportWavBtn" class="accent">WAV</button>
+    </div>
+  </header>
+
+  <section class="control-strip">
+    <label>BPM <input id="bpm" type="number" min="40" max="160" value="76"></label>
+    <label>Tonalité <select id="keySelect"></select></label>
+    <label>Durée <select id="durationSelect"><option>30</option><option>60</option><option selected>90</option><option>120</option></select>s</label>
+    <label>Grille <select id="gridSelect"><option value="1">1/4</option><option value="0.5" selected>1/8</option><option value="0.25">1/16</option></select></label>
+    <label>Zoom <input id="zoomSlider" type="range" min="34" max="110" value="58"></label>
+    <button id="humanizeBtn">Humaniser 25%</button>
+    <button id="clearBtn" class="danger-ghost">Effacer</button>
+  </section>
+
+  <main class="workspace">
+    <aside class="tracks-panel panel">
+      <div class="panel-title">PISTES <button id="addTrackBtn">＋</button></div>
+      <div id="tracks"></div>
+    </aside>
+
+    <section class="editor panel">
+      <div class="editor-toolbar">
+        <div class="mode-switch">
+          <button class="mode active" data-mode="notes">NOTES</button>
+          <button class="mode" data-mode="drums">RYTHME</button>
+          <button class="mode" data-mode="mix">MIX</button>
+        </div>
+        <div id="playheadLabel">00:00.0</div>
+      </div>
+
+      <div id="notesView" class="view active">
+        <div class="piano-wrap">
+          <div id="keyboard" class="keyboard"></div>
+          <div id="rollScroller" class="roll-scroller">
+            <canvas id="rollCanvas"></canvas>
+          </div>
+        </div>
+        <div class="hint">Tap = créer • Glisser = déplacer • Poignée droite = durée • Appui long = supprimer</div>
+      </div>
+
+      <div id="drumsView" class="view">
+        <div class="drum-toolbar">Pattern 2 mesures • 16 pas</div>
+        <div id="drumGrid" class="drum-grid"></div>
+      </div>
+
+      <div id="mixView" class="view">
+        <div id="mixer" class="mixer"></div>
+      </div>
+    </section>
+
+    <aside class="inspector panel">
+      <div class="panel-title">INSTRUMENT</div>
+      <label>Preset<select id="instrumentSelect"></select></label>
+      <label>Volume<input id="volume" type="range" min="0" max="1" step="0.01" value="0.75"></label>
+      <label>Pan<input id="pan" type="range" min="-1" max="1" step="0.01" value="0"></label>
+      <label>Attack<input id="attack" type="range" min="0.001" max="1.2" step="0.01" value="0.02"></label>
+      <label>Release<input id="release" type="range" min="0.05" max="5" step="0.05" value="1.5"></label>
+      <label>Reverb<input id="reverb" type="range" min="0" max="1" step="0.01" value="0.15"></label>
+      <label>Filtre<input id="filter" type="range" min="500" max="18000" step="100" value="14000"></label>
+      <label>Vélocité note<input id="velocity" type="range" min="0.05" max="1" step="0.01" value="0.72"></label>
+      <div class="note-actions">
+        <button id="duplicateNoteBtn">Dupliquer note</button>
+        <button id="deleteNoteBtn" class="danger-ghost">Supprimer note</button>
+      </div>
+      <div class="panel-title small">ACCORDS</div>
+      <div class="chord-row">
+        <select id="chordRoot"></select>
+        <select id="chordType"><option value="maj7">maj7</option><option value="min7">min7</option><option value="sus2">sus2</option><option value="maj">maj</option><option value="min">min</option></select>
+        <button id="addChordBtn">Ajouter</button>
+      </div>
+      <div id="chordsList" class="chords-list"></div>
+    </aside>
+  </main>
+
+  <nav class="mobile-tabs">
+    <button data-mobile="tracks">PISTES</button>
+    <button data-mobile="editor" class="active">NOTES</button>
+    <button data-mobile="inspector">MIX</button>
+  </nav>
+
+  <input id="fileInput" type="file" accept=".ltcmusic,.json,application/json" hidden>
+</div>
+<script src="app.js"></script>
+</body>
+</html>

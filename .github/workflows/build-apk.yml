@@ -24,27 +24,20 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-
-          ZIP="$(find . -maxdepth 1 -type f \
-            -name 'LTC_Music_Studio_V*_light.zip' \
-            -printf '%f\n' | sort -V | tail -n 1)"
-
+          ZIP="$(find . -maxdepth 1 -type f -name 'LTC_Music_Studio_V*_light.zip' -printf '%f\n' | sort -V | tail -n 1)"
           if [ -z "$ZIP" ]; then
-            echo "Aucun ZIP LTC light trouvé à la racine du dépôt."
+            echo "Aucun ZIP LTC light trouvÃ© Ã  la racine du dÃ©pÃ´t."
             exit 1
           fi
-
           echo "file=$ZIP" >> "$GITHUB_OUTPUT"
-          echo "ZIP utilisé : $ZIP"
+          echo "ZIP utilisÃ© : $ZIP"
 
       - name: Unpack app
         shell: bash
         run: |
           rm -rf appsrc
           mkdir appsrc
-
           unzip -q "${{ steps.zip.outputs.file }}" -d appsrc
-
           test -f appsrc/package.json
           test -f appsrc/capacitor.config.json
           test -d appsrc/www
@@ -61,32 +54,26 @@ jobs:
           java-version: '21'
 
       - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
+        uses: android-actions/setup-android@v4
+        with:
+          packages: 'platform-tools'
 
       - name: Install Android SDK 36
         shell: bash
         run: |
-          yes | sdkmanager --licenses >/dev/null || true
-
-          sdkmanager \
-            "platform-tools" \
-            "platforms;android-36" \
-            "build-tools;36.0.0"
-
+          sdkmanager "platforms;android-36" "build-tools;36.0.0"
           sdkmanager --version
           adb --version
 
       - name: Install Capacitor dependencies
         working-directory: appsrc
-        run: |
-          npm install --no-audit --no-fund
+        run: npm install --no-audit --no-fund
 
       - name: Create Android project
         working-directory: appsrc
         shell: bash
         run: |
           rm -rf android
-
           npx cap add android
           npx cap sync android
 
@@ -104,15 +91,10 @@ jobs:
         run: |
           VERSION="$(node -p "require('./package.json').version")"
           APK_NAME="LTC_Music_Studio_V${VERSION}.apk"
-
-          cp \
-            android/app/build/outputs/apk/debug/app-debug.apk \
-            "../${APK_NAME}"
-
+          cp android/app/build/outputs/apk/debug/app-debug.apk "../${APK_NAME}"
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
           echo "apk=$APK_NAME" >> "$GITHUB_OUTPUT"
-
-          echo "APK créé : $APK_NAME"
+          echo "APK crÃ©Ã© : $APK_NAME"
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
@@ -130,19 +112,7 @@ jobs:
         shell: bash
         run: |
           if gh release view "$TAG" >/dev/null 2>&1; then
-
-            gh release upload \
-              "$TAG" \
-              "$APK" \
-              --clobber
-
+            gh release upload "$TAG" "$APK" --clobber
           else
-
-            gh release create \
-              "$TAG" \
-              "$APK" \
-              --target "$GITHUB_SHA" \
-              --title "LTC Music Studio V${{ steps.version.outputs.version }}" \
-              --notes "APK Android construit automatiquement depuis LTC Music Studio V${{ steps.version.outputs.version }}."
-
+            gh release create "$TAG" "$APK"               --target "$GITHUB_SHA"               --title "LTC Music Studio V${{ steps.version.outputs.version }}"               --notes "APK Android construit automatiquement depuis LTC Music Studio V${{ steps.version.outputs.version }}."
           fi

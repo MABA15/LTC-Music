@@ -1,0 +1,42 @@
+name: Build LTC Music Studio APK
+
+on:
+  push:
+    paths:
+      - 'LTC_Music_Studio_V*_light.zip'
+      - '.github/workflows/build-apk.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-android:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Select latest LTC light ZIP
+        id: zip
+        shell: bash
+        run: |
+          set -euo pipefail
+          ZIP="$(find . -maxdepth 1 -type f -name 'LTC_Music_Studio_V*_light.zip' -printf '%f\n' | sort -V | tail -n 1)"
+          if [ -z "$ZIP" ]; then
+            echo "No LTC_Music_Studio_V*_light.zip found at repository root."
+            exit 1
+          fi
+          echo "file=$ZIP" >> "$GITHUB_OUTPUT"
+          echo "Using $ZIP"
+
+      - name: Unpack app
+        shell: bash
+        run: |
+          rm -rf appsrc
+          mkdir appsrc
+          unzip -q "${{ steps.zip.outputs.file }}" -d appsrc
+          test -f appsrc/package.json
+          test -f appsrc/capacitor.config.json
+          test -d appsrc/www

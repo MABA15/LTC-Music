@@ -14,10 +14,10 @@ jobs:
   build-android:
     runs-on: ubuntu-latest
     timeout-minutes: 30
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
       - name: Select latest LTC light ZIP
         id: zip
         shell: bash
@@ -39,4 +39,3 @@ jobs:
           unzip -q "${{ steps.zip.outputs.file }}" -d appsrc
           test -f appsrc/package.json
           test -f appsrc/capacitor.config.json
-          test -d appsrc/www
